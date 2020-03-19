@@ -152,7 +152,8 @@ class GcodeExport(inkex.Effect):
 			
 			pos_file_png_exported = os.path.join(self.options.directory,self.options.filename+".png") 
 			pos_file_png_BW = os.path.join(self.options.directory,self.options.filename+suffix+"preview.png")  
-			pos_file_gcode = os.path.join(self.options.directory,self.options.filename+suffix+".gcode") 
+			# pos_file_gcode = os.path.join(self.options.directory,self.options.filename+suffix+".gcode") \
+			pos_file_gcode = os.path.join(self.options.directory,self.options.filename+suffix+".txt")
 			
 
 			#Esporto l'immagine in PNG
@@ -433,6 +434,24 @@ class GcodeExport(inkex.Effect):
 			
 			#Configurazioni iniziali standard Gcode
 			file_gcode.write('; Generated with:\n; "Raster 2 Laser Gcode generator"\n; by 305 Engineering\n;\n;\n;\n')
+			
+			file_gcode.write('; SETTINGS:\n')
+			file_gcode.write('; Replace Transparency with:\t\t' + str(self.options.bg_color) + '\t\t; (option nr in list)\n')
+			file_gcode.write('; Resolution:\t\t\t\t' + str(self.options.resolution) + '\t\t; (option nr in list)\n')
+			file_gcode.write('; Color To Grayscale conversion:\t' + str(self.options.grayscale_type) + '\t\t; (option nr in list)\n')
+			file_gcode.write('; B/W conversion:\t\t\t' + str(self.options.conversion_type) + '\t\t; (option nr in list)\n')
+			file_gcode.write('; Grayscale resolution:\t\t\t' + str(self.options.grayscale_resolution) + '\t\t; (option nr in list)\n')
+			file_gcode.write('; B/W threshold (value):\t\t' + str(self.options.BW_threshold) + '\t\t; (value)\n')
+			file_gcode.write('; Lowest Power Level (value):\t\t' + str(self.options.laserpower_LOW) + '\t\t; (value)\n')
+			file_gcode.write('; Highest Power level (value):\t\t' + str(self.options.laserpower_HIGH) + '\t\t; (value)\n')
+			file_gcode.write('; Engraving Speed (value):\t\t' + str(self.options.speed_ON) + '\t\t; (value)\n')
+			file_gcode.write('; Flip Y:\t\t\t\t' + str(self.options.flip_y) + '\t\t; (True / False)\n')
+			file_gcode.write('; Homing (option nr in list):\t\t' + str(self.options.homing) + '\t\t; (value)\n')
+			file_gcode.write('; Laser On Command (value):\t\t' + str(self.options.laseron) + '\t\t; (value)\n')
+			file_gcode.write('; Laser Off Command (value):\t\t' + str(self.options.laseroff) + '\t\t; (value)\n')
+
+			file_gcode.write(';\n;\n')
+			
 			#HOMING
 			if self.options.homing == 1:
 				file_gcode.write('G28; home all axes\n')
