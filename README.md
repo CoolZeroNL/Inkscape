@@ -1,3 +1,9 @@
+# Chnages
+- Add Power Range
+- Add Settings to Export File
+- Remove G92 line in Export File
+- 
+
 # Various Inkscape extensions
 
  - Raster 2 Laser GCode generator
