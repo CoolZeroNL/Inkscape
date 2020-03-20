@@ -70,7 +70,8 @@ class GcodeExport(inkex.Effect):
 		
 		 		
 		#Velocita Nero e spostamento
-		self.OptionParser.add_option("","--speed_ON",action="store", type="int", dest="speed_ON", default="200",help="") 
+		self.OptionParser.add_option("","--speed_ON",action="store", type="int", dest="speed_ON", default="200",help="Laser speed (mm/min)")
+		self.OptionParser.add_option("","--speed_OFF",action="store", type="string", dest="speed_OFF", default="3000",help="Travel speed (mm/min)") 
 
 		# Mirror Y
 		self.OptionParser.add_option("","--flip_y",action="store", type="inkbool", dest="flip_y", default=False,help="")
@@ -441,14 +442,15 @@ class GcodeExport(inkex.Effect):
 			file_gcode.write('; Color To Grayscale conversion:\t' + str(self.options.grayscale_type) + '\t\t; (option nr in list)\n')
 			file_gcode.write('; B/W conversion:\t\t\t' + str(self.options.conversion_type) + '\t\t; (option nr in list)\n')
 			file_gcode.write('; Grayscale resolution:\t\t\t' + str(self.options.grayscale_resolution) + '\t\t; (option nr in list)\n')
-			file_gcode.write('; B/W threshold:\t\t' + str(self.options.BW_threshold) + '\t\t; (value)\n')
-			file_gcode.write('; Lowest Power Level:\t\t' + str(self.options.laserpower_LOW) + '\t\t; (value)\n')
-			file_gcode.write('; Highest Power level:\t\t' + str(self.options.laserpower_HIGH) + '\t\t; (value)\n')
-			file_gcode.write('; Engraving Speed:\t\t' + str(self.options.speed_ON) + '\t\t; (value)\n')
+			file_gcode.write('; B/W threshold:\t\t\t' + str(self.options.BW_threshold) + '\t\t; (value)\n')
+			file_gcode.write('; Lowest Power Level:\t\t\t' + str(self.options.laserpower_LOW) + '\t\t; (value)\n')
+			file_gcode.write('; Highest Power level:\t\t\t' + str(self.options.laserpower_HIGH) + '\t\t; (value)\n')
+			file_gcode.write('; Laser Speed:\t\t\t\t' + str(self.options.speed_ON) + '\t\t; (value)\n')
+			file_gcode.write('; Travel Speed:\t\t\t\t' + str(self.options.speed_OFF) + '\t\t; (value)\n')
 			file_gcode.write('; Flip Y:\t\t\t\t' + str(self.options.flip_y) + '\t\t; (True / False)\n')
-			file_gcode.write('; Homing (option nr in list):\t\t' + str(self.options.homing) + '\t\t; (value)\n')
-			file_gcode.write('; Laser On Command:\t\t' + str(self.options.laseron) + '\t\t; (value)\n')
-			file_gcode.write('; Laser Off Command:\t\t' + str(self.options.laseroff) + '\t\t; (value)\n')
+			file_gcode.write('; Homing:\t\t\t\t' + str(self.options.homing) + '\t\t; (option nr in list)\n')
+			file_gcode.write('; Laser On Command:\t\t\t' + str(self.options.laseron) + '\t\t; (value)\n')
+			file_gcode.write('; Laser Off Command:\t\t\t' + str(self.options.laseroff) + '\t\t; (value)\n')
 
 			file_gcode.write(';\n;\n')
 			
@@ -483,12 +485,15 @@ class GcodeExport(inkex.Effect):
 								if  Laser_ON == True :   #DEVO evitare di uscire dalla matrice
 									if x == w-1 :
 										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
-										file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+										# file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+										file_gcode.write(self.options.laseroff + " S0" + "; Laser OFF\n" + "G1 F" + self.options.speed_OFF + "\n")
+
 										Laser_ON = False
 									else: 
 										if matrice_BN[y][x+1] != N :
 											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
-											file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+											# file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+											file_gcode.write(self.options.laseroff + " S0" + "; Laser OFF\n" + "G1 F" + self.options.speed_OFF + "\n")
 											Laser_ON = False
 					else:
 						for x in reversed(range(w)):
@@ -501,12 +506,14 @@ class GcodeExport(inkex.Effect):
 								if  Laser_ON == True :   #DEVO evitare di uscire dalla matrice
 									if x == 0 :
 										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
-										file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+										# file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+										file_gcode.write(self.options.laseroff + " S0" + "; Laser OFF\n" + "G1 F" + self.options.speed_OFF + "\n")
 										Laser_ON = False
 									else: 
 										if matrice_BN[y][x-1] != N :
 											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
-											file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+											# file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+											file_gcode.write(self.options.laseroff + " S0" + "; Laser OFF\n" + "G1 F" + self.options.speed_OFF + "\n")
 											Laser_ON = False				
 
 			else: ##SCALA DI GRIGI
@@ -525,13 +532,15 @@ class GcodeExport(inkex.Effect):
 								if  Laser_ON == True :   #DEVO evitare di uscire dalla matrice
 									if x == w-1 : #controllo fine riga
 										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
-										file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+										# file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+										file_gcode.write(self.options.laseroff + " S0" + "; Laser OFF\n" + "G1 F" + self.options.speed_OFF + "\n")
 										Laser_ON = False
 										
 									else: 
 										if matrice_BN[y][x+1] == B :
 											file_gcode.write('G01 X' + str(float(x+1)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
-											file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+											# file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+											file_gcode.write(self.options.laseroff + " S0" + "; Laser OFF\n" + "G1 F" + self.options.speed_OFF + "\n")
 											Laser_ON = False
 											
 										elif matrice_BN[y][x] != matrice_BN[y][x+1] :
@@ -556,13 +565,15 @@ class GcodeExport(inkex.Effect):
 								if  Laser_ON == True :   #DEVO evitare di uscire dalla matrice
 									if x == 0 : #controllo fine riga ritorno
 										file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) +' F' + str(F_G01) + '\n')
-										file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+										# file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+										file_gcode.write(self.options.laseroff + " S0" + "; Laser OFF\n" + "G1 F" + self.options.speed_OFF + "\n")
 										Laser_ON = False
 										
 									else: 
 										if matrice_BN[y][x-1] == B :
 											file_gcode.write('G01 X' + str(float(x)/Scala) + ' Y' + str(float(y)/Scala) + ' F' + str(F_G01) +'\n')
-											file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+											# file_gcode.write(self.options.laseroff + '; Laser OFF\n')
+											file_gcode.write(self.options.laseroff + " S0" + "; Laser OFF\n" + "G1 F" + self.options.speed_OFF + "\n")
 											Laser_ON = False
 											
 										elif  matrice_BN[y][x] != matrice_BN[y][x-1] :
@@ -570,7 +581,6 @@ class GcodeExport(inkex.Effect):
 											# file_gcode.write(self.options.laseron + ' '+ ' S' + str(255 - matrice_BN[y][x-1]) +'\n')
 											##scale the "Color to be burned to the appropriate laser output"
 											newLaserPower = ((self.options.laserpower_HIGH - self.options.laserpower_LOW) *  ((255 - matrice_BN[y][x-1]) - 0) // (255 - 0)) + self.options.laserpower_LOW
-
 											file_gcode.write(self.options.laseron + ' '+ ' S' + str(newLaserPower) +' ; Change Laser power\n')
 
 			
