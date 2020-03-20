@@ -79,6 +79,9 @@
 	<param name="speed_ON" type="int" min="1" max="5000" gui-text="Laser speed (mm/sec)">200</param>
 	<param name="speed_OFF" type="int" min="1" max="12000" gui-text="Travel speed (mm/sec)">3000</param>
 	
+	<param name="passes" type="int" min="1" max="100" _gui-text="Passes:">1</param>
+	<param name="pass-depth" type="float" min="-1" max="10" _gui-text="Pass Depth (mm) (-1 = disabled):">-1</param>
+
 	<!-- FLIP = coordinate Cartesiane (False) Coordinate "informatiche" (True) -->
 	<param name="flip_y" type="boolean" gui-text="Flip Y">false</param>
 
